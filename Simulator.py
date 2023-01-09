@@ -11,6 +11,7 @@ from gym_duckietown.envs import DuckietownEnv
 
 from DuckieDetector import DuckieDetector
 from DuckieDetectorML import DuckieDetectorML
+from LaneDetector import LaneDetector
 
 class Simulator:
 
@@ -36,6 +37,7 @@ class Simulator:
 
         self.duckieDetector = DuckieDetector()
         self.duckieDetectorML = DuckieDetectorML()
+        self.laneDetector = LaneDetector()
 
         self.env = gym.make(args.env_name)
 
@@ -102,6 +104,7 @@ class Simulator:
         frame = Image.fromarray(obs)
         #self.duckieDetector.detect(frame)
         self.duckieDetectorML.detect(frame)
+        #self.laneDetector.detect(frame)
 
         if self.key_handler[key.RETURN]:
             im = Image.fromarray(obs)

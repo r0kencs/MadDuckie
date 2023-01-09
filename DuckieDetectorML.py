@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import torch
 
-MODEL_PATH = 'yolov5/runs/train/exp/weights/last.pt'
+MODEL_PATH = 'model/exp/weights/last.pt'
 
 class DuckieDetectorML:
     def __init__(self):
@@ -13,7 +13,7 @@ class DuckieDetectorML:
         open_cv_image = open_cv_image[:, :, ::-1].copy()
         img = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
 
-        results = model(img)
+        results = self.model(img)
 
         results.render()
         out = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)

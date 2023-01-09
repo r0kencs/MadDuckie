@@ -10,6 +10,7 @@ from pyglet.window import key
 from gym_duckietown.envs import DuckietownEnv
 
 from DuckieDetector import DuckieDetector
+from DuckieDetectorML import DuckieDetectorML
 
 class Simulator:
 
@@ -17,7 +18,7 @@ class Simulator:
     key_handler = None
 
     duckieDetector = None
-
+    duckieDetectorML = None
 
     def __init__(self):
         parser = argparse.ArgumentParser()
@@ -34,6 +35,7 @@ class Simulator:
         args = parser.parse_args()
 
         self.duckieDetector = DuckieDetector()
+        self.duckieDetectorML = DuckieDetectorML()
 
         self.env = gym.make(args.env_name)
 
@@ -98,7 +100,8 @@ class Simulator:
         print("step_count = %s, reward=%.3f" % (self.env.unwrapped.step_count, reward))
 
         frame = Image.fromarray(obs)
-        self.duckieDetector.detect(frame)
+        #self.duckieDetector.detect(frame)
+        self.duckieDetectorML.detect(frame)
 
         if self.key_handler[key.RETURN]:
             im = Image.fromarray(obs)

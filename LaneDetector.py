@@ -118,7 +118,7 @@ def display_lines(image, lines):
             x1 = clamp(x1, 0, 639)
             y1 = clamp(y1, 0, 479)
             x2 = clamp(x2, 0, 639)
-            y2 = clamp(y1, 0, 479)
+            y2 = clamp(y2, 0, 479)
             cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
     return lines_image
 

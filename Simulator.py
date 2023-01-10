@@ -116,7 +116,11 @@ class Simulator:
         if right_line is None:
             self.decidedAction = np.array([0, -2])
         else:
-            self.decidedAction = np.array([0.4, 0])
+            x1, y1, x2, y2 = right_line
+            if x1 < 639:
+                self.decidedAction = np.array([0, 2])
+            else:
+                self.decidedAction = np.array([0.4, 0])
 
         if self.key_handler[key.RETURN]:
             im = Image.fromarray(obs)

@@ -177,7 +177,10 @@ lanes = cv2.addWeighted(imgCopy, 0.5, black_lines, 1, 1)
 cv2.imshow("Hough Probabilistic Lane Detection", lanes)
 
 res = unpackLines(averaged_lines)
+print(img.shape)
+img_height, img_width, _ = img.shape
 
 print(res)
+print(f"width: {img_width} height: {img_height}")
 
 cv2.waitKey(0)

@@ -22,6 +22,9 @@ def region(image):
     mask = cv2.bitwise_and(image, mask)
     return mask
 
+def clamp(n, minn, maxn):
+    return max(min(maxn, n), minn)
+
 def drawHoughLines(image, lines):
     if lines is not None:
         for i in range(0, len(lines)):
@@ -112,6 +115,10 @@ def display_lines(image, lines):
         for line in lines:
             (x1, y1, x2, y2), right = line
             #draw lines on a black image
+            x1 = clamp(x1, 0, 639)
+            y1 = clamp(y1, 0, 479)
+            x2 = clamp(x2, 0, 639)
+            y2 = clamp(y1, 0, 479)
             cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
     return lines_image
 

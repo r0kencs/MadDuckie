@@ -117,6 +117,19 @@ def display_lines(image, lines):
             cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
     return lines_image
 
+def unpackLines(lines):
+    res = [None, None]
+
+    if lines is not None:
+        for line in lines:
+            (x1, y1, x2, y2), right = line
+            if right:
+                res[1] = np.array([x1, y1, x2, y2])
+            else:
+                res[0] = np.array([x1, y1, x2, y2])
+
+    return res
+
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 lower_white = np.array([20,60,100],np.uint8)
@@ -162,5 +175,9 @@ black_lines = display_lines(imgCopy, averaged_lines)
 
 lanes = cv2.addWeighted(imgCopy, 0.5, black_lines, 1, 1)
 cv2.imshow("Hough Probabilistic Lane Detection", lanes)
+
+res = unpackLines(averaged_lines)
+
+print(res)
 
 cv2.waitKey(0)

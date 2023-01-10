@@ -126,6 +126,8 @@ def unpackLines(lines):
             else:
                 res[0] = np.array([x1, y1, x2, y2])
 
+    return res
+
 
 class LaneDetector:
     def detect(self, frame):

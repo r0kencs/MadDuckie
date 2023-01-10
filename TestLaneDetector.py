@@ -45,17 +45,38 @@ def drawHoughLinesP(image, lines):
             cv2.line(image, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
     return image
 
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-blur = cv2.GaussianBlur(gray, (5, 5), 0)
+lower_white = np.array([20,60,100],np.uint8)
+upper_white = np.array([80,255,255],np.uint8)
+white_mask = cv2.inRange(hsv, lower_white, upper_white)
 
-edges = cv2.Canny(blur, 150, 255, L2gradient = True)
+res = cv2.bitwise_and(img, img, mask=white_mask)
+
+res2 = cv2.bitwise_xor(img, res)
+
+cv2.imshow('res', res)
+cv2.imshow('res2',res2)
+
+gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
+
+ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+
+cv2.imshow("thresh", thresh)
+
+blur = cv2.GaussianBlur(thresh, (5, 5), 0)
+
+edges = cv2.Canny(blur, 0, 255, L2gradient = True)
 
 cv2.imshow("Edges", edges)
 
 region_image = region(edges)
 
 cv2.imshow("Region", region_image)
+
+canny1 = cv2.bitwise_or(gray, edges)
+
+cv2.imshow("Edges", canny1)
 
 lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
 linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=1, maxLineGap=100)

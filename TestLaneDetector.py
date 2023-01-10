@@ -71,7 +71,6 @@ def average(image, lines):
         x1, y1, x2, y2 = line.reshape(4)
         #fit line to points, return slope and y-int
         parameters = np.polyfit((x1, x2), (y1, y2), 1)
-        print(parameters)
         slope = parameters[0]
         y_int = parameters[1]
         #lines on the right have positive slope, and lines on the left have neg slope
@@ -89,11 +88,11 @@ def average(image, lines):
     #create lines based on averages calculates
     if left_avg is not None and not np.isnan(left_avg).all() :
         left_line = make_points(image, left_avg)
-        finalLines.append(left_line)
+        finalLines.append((left_line, 0))
 
     if right_avg is not None and not np.isnan(right_avg).all():
         right_line = make_points(image, right_avg)
-        finalLines.append(right_line)
+        finalLines.append((right_line, 1))
 
     return finalLines
 
@@ -113,7 +112,7 @@ def display_lines(image, lines):
     #make sure array isn't empty
     if lines is not None:
         for line in lines:
-            x1, y1, x2, y2 = line
+            (x1, y1, x2, y2), right = line
             #draw lines on a black image
             cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
     return lines_image

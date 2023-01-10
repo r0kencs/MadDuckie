@@ -117,7 +117,7 @@ def display_lines(image, lines):
         for line in lines:
             (x1, y1, x2, y2), right = line
             #draw lines on a black image
-            
+
             cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
     return lines_image
 
@@ -143,13 +143,13 @@ white_mask = cv2.inRange(hsv, lower_white, upper_white)
 res = cv2.bitwise_and(img, img, mask=white_mask)
 res2 = cv2.bitwise_xor(img, res)
 
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
 
-ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+ret, thresh = cv2.threshold(gray,150,255,cv2.THRESH_BINARY)
 
 cv2.imshow("thresh", thresh)
 
-blur = cv2.GaussianBlur(gray, (5, 5), 0)
+blur = cv2.GaussianBlur(thresh, (5, 5), 0)
 
 edges = cv2.Canny(blur, 0, 255, L2gradient = True)
 
@@ -157,10 +157,8 @@ region_image = region(edges)
 
 cv2.imshow("edges", edges)
 
-canny1 = cv2.bitwise_or(gray, edges)
-
 #lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
-linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=1, maxLineGap=100)
+linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=50, maxLineGap=1)
 
 #linesP = getCorrectLines(linesP)
 
@@ -169,7 +167,9 @@ imgCopy = img.copy()
 averaged_lines = average(imgCopy, linesP)
 
 #img = drawHoughLines(img, lines)
-#imgCopy = drawHoughLinesP(imgCopy, averaged_lines)
+#imgCopy = drawHoughLinesP(imgCopy, linesP)
+
+#cv2.imshow("Hough Probabilistic Lane Detection", imgCopy)
 
 black_lines = display_lines(imgCopy, averaged_lines)
 

@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import torch
+import math
 
 MODEL_PATH = 'model/exp/weights/last.pt'
 
@@ -20,4 +21,21 @@ class DuckieDetectorML:
 
         cv2.imshow('YOLOv5', out)
 
+        happy_results = results.xyxy[0].numpy()
+
+        distances = []
+
+        for result in happy_results:
+            x1, y1, x2, y2, confidence, c_name = result
+            #print(f"x1: {x1} y1: {y1} x2: {x2} y2: {y2} confidence: {confidence} class: {c_name}")
+            d1 = math.dist([320, 480], [x1, y1])
+            d2 = math.dist([320, 480], [x2, y2])
+            distance = min([d1, d2])
+            distances.append(distance)
+            #print(f"Distance: {distance}")
+
         cv2.waitKey(1)
+
+        min_d = min(distances)
+
+        return min_d

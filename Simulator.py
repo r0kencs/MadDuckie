@@ -123,8 +123,10 @@ class Simulator:
 
         frame = Image.fromarray(obs)
         #self.duckieDetector.detect(frame)
-        self.duckieDetectorML.detect(frame)
+        duckie_distance = self.duckieDetectorML.detect(frame)
         left_line, right_line = self.laneDetector.detect(frame)
+
+        print(f"duckie_distance: {duckie_distance}")
 
         print(f"LeftLine: {left_line} RightLine: {right_line}")
         if right_line is None:
@@ -146,8 +148,6 @@ class Simulator:
                 self.decidedAction = np.array([0.0, -1.0])
             else:
                 self.decidedAction = np.array([1.0, 1.0])
-
-        #self.decidedAction = np.array([0.4, 0])
 
         if self.key_handler[key.RETURN]:
             im = Image.fromarray(obs)

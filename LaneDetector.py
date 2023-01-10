@@ -150,23 +150,21 @@ class LaneDetector:
         white_mask = cv2.inRange(hsv, lower_white, upper_white)
 
         res = cv2.bitwise_and(img, img, mask=white_mask)
-
         res2 = cv2.bitwise_xor(img, res)
 
-        #cv2.imshow('res', res)
-        #cv2.imshow('res2',res2)
-
-        gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
 
-        #cv2.imshow("thresh", thresh)
+        cv2.imshow("thresh", thresh)
 
-        blur = cv2.GaussianBlur(thresh, (5, 5), 0)
+        blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
         edges = cv2.Canny(blur, 0, 255, L2gradient = True)
 
         region_image = region(edges)
+
+        cv2.imshow("edges", edges)
 
         canny1 = cv2.bitwise_or(gray, edges)
 
@@ -190,6 +188,11 @@ class LaneDetector:
         cv2.imshow("Hough Probabilistic Lane Detection", lanes)
 
         res = unpackLines(averaged_lines)
+        print(img.shape)
+        img_height, img_width, _ = img.shape
+
+        print(res)
+        print(f"width: {img_width} height: {img_height}")
 
         cv2.waitKey(1)
 

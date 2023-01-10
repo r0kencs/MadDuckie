@@ -117,10 +117,7 @@ def display_lines(image, lines):
         for line in lines:
             (x1, y1, x2, y2), right = line
             #draw lines on a black image
-            x1 = clamp(x1, 0, 639)
-            y1 = clamp(y1, 0, 479)
-            x2 = clamp(x2, 0, 639)
-            y2 = clamp(y2, 0, 479)
+            
             cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
     return lines_image
 
@@ -144,23 +141,21 @@ upper_white = np.array([80,255,255],np.uint8)
 white_mask = cv2.inRange(hsv, lower_white, upper_white)
 
 res = cv2.bitwise_and(img, img, mask=white_mask)
-
 res2 = cv2.bitwise_xor(img, res)
 
-cv2.imshow('res', res)
-cv2.imshow('res2',res2)
-
-gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
 
 cv2.imshow("thresh", thresh)
 
-blur = cv2.GaussianBlur(thresh, (5, 5), 0)
+blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
 edges = cv2.Canny(blur, 0, 255, L2gradient = True)
 
 region_image = region(edges)
+
+cv2.imshow("edges", edges)
 
 canny1 = cv2.bitwise_or(gray, edges)
 

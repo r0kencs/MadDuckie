@@ -115,11 +115,8 @@ def display_lines(image, lines):
         for line in lines:
             (x1, y1, x2, y2), right = line
             #draw lines on a black image
-            x1 = clamp(x1, 0, 639)
-            y1 = clamp(y1, 0, 479)
-            x2 = clamp(x2, 0, 639)
-            y2 = clamp(y2, 0, 479)
-            cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
+            print(f"x1: {x1} y1: {y1} x2: {x2} y2: {y2}")
+            cv2.line(lines_image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 10)
     return lines_image
 
 def unpackLines(lines):
@@ -134,6 +131,16 @@ def unpackLines(lines):
                 res[0] = np.array([x1, y1, x2, y2])
 
     return res
+
+def checkLines(lines):
+    if lines is not None:
+        for line in lines:
+            (x1, y1, x2, y2), right = line
+            if x1 > 10000 or y1 > 10000 or x2 > 10000 or y2 > 10000:
+                return False
+            if x1 < -10000 or y1 < -10000 or x2 < -10000 or y2 < -10000:
+                return False
+    return True
 
 
 class LaneDetector:
@@ -152,9 +159,9 @@ class LaneDetector:
         res = cv2.bitwise_and(img, img, mask=white_mask)
         res2 = cv2.bitwise_xor(img, res)
 
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
 
-        ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+        ret, thresh = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
 
         cv2.imshow("thresh", thresh)
 
@@ -165,8 +172,6 @@ class LaneDetector:
         region_image = region(edges)
 
         cv2.imshow("edges", edges)
-
-        canny1 = cv2.bitwise_or(gray, edges)
 
         #lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
         linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=1, maxLineGap=100)
@@ -179,6 +184,9 @@ class LaneDetector:
 
         #img = drawHoughLines(img, lines)
         #imgCopy = drawHoughLinesP(imgCopy, averaged_lines)
+
+        if not checkLines(averaged_lines):
+            return [None, None]
 
         black_lines = display_lines(imgCopy, averaged_lines)
 

@@ -117,6 +117,7 @@ class Simulator:
             self.decidedAction = np.array([0, -2])
         else:
             x1, y1, x2, y2 = right_line
+            slope = (y2 - y1) / (x2 - x1)
             if x1 < 639:
                 self.decidedAction = np.array([0, 2])
             else:

@@ -59,6 +59,63 @@ def getCorrectLines(lines):
 
     return correctLines
 
+def average(image, lines):
+    left = []
+    right = []
+
+    if lines is not None:
+      for line in lines:
+        print(line)
+        x1, y1, x2, y2 = line.reshape(4)
+        #fit line to points, return slope and y-int
+        parameters = np.polyfit((x1, x2), (y1, y2), 1)
+        print(parameters)
+        slope = parameters[0]
+        y_int = parameters[1]
+        #lines on the right have positive slope, and lines on the left have neg slope
+        if slope < 0:
+            left.append((slope, y_int))
+        else:
+            right.append((slope, y_int))
+
+    #takes average among all the columns (column0: slope, column1: y_int)
+    right_avg = np.average(right, axis=0)
+    left_avg = np.average(left, axis=0)
+
+    finalLines = []
+
+    #create lines based on averages calculates
+    if left_avg is not None and not np.isnan(left_avg).all() :
+        left_line = make_points(image, left_avg)
+        finalLines.append(left_line)
+
+    if right_avg is not None and not np.isnan(right_avg).all():
+        right_line = make_points(image, right_avg)
+        finalLines.append(right_line)
+
+    return finalLines
+
+def make_points(image, average):
+    print(average)
+    slope, y_int = average
+    y1 = image.shape[0]
+    #how long we want our lines to be --> 3/5 the size of the image
+    y2 = int(y1 * (3/5))
+    #determine algebraically
+    x1 = int((y1 - y_int) // slope)
+    x2 = int((y2 - y_int) // slope)
+    return np.array([x1, y1, x2, y2])
+
+def display_lines(image, lines):
+    lines_image = np.zeros_like(image)
+    #make sure array isn't empty
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line
+            #draw lines on a black image
+            cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
+    return lines_image
+
 
 class LaneDetector:
     def detect(self, frame):
@@ -97,15 +154,20 @@ class LaneDetector:
         #lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
         linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=1, maxLineGap=100)
 
-        linesP = getCorrectLines(linesP)
+        #linesP = getCorrectLines(linesP)
 
         imgCopy = img.copy()
 
+        averaged_lines = average(imgCopy, linesP)
+
         #img = drawHoughLines(img, lines)
-        imgCopy = drawHoughLinesP(imgCopy, linesP)
+        #imgCopy = drawHoughLinesP(imgCopy, averaged_lines)
+
+        black_lines = display_lines(imgCopy, averaged_lines)
 
         #cv2.imshow("Hough Lane Detection", img)
 
-        cv2.imshow("Hough Probabilistic Lane Detection", imgCopy)
+        lanes = cv2.addWeighted(imgCopy, 0.5, black_lines, 1, 1)
+        cv2.imshow("Hough Probabilistic Lane Detection", lanes)
 
         cv2.waitKey(1)

@@ -21,6 +21,8 @@ class Simulator:
     duckieDetector = None
     duckieDetectorML = None
 
+    decidedAction = []
+
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--env-name", default=None)
@@ -49,6 +51,8 @@ class Simulator:
 
         pyglet.clock.schedule_interval(self.update, 1.0 / self.env.unwrapped.frame_rate)
 
+        self.decidedAction = np.array([0.0, 0.0])
+
         # Enter main event loop
         pyglet.app.run()
 
@@ -61,6 +65,8 @@ class Simulator:
         min_rad = 0.08
 
         action = np.array([0.0, 0.0])
+
+        action = self.decidedAction
 
         if self.key_handler[key.UP]:
             action += np.array([0.44, 0.0])
@@ -104,7 +110,13 @@ class Simulator:
         frame = Image.fromarray(obs)
         #self.duckieDetector.detect(frame)
         self.duckieDetectorML.detect(frame)
-        #self.laneDetector.detect(frame)
+        left_line, right_line = self.laneDetector.detect(frame)
+
+        print(f"LeftLine: {left_line} RightLine: {right_line}")
+        if right_line is None:
+            self.decidedAction = np.array([0, -2])
+        else:
+            self.decidedAction = np.array([0.4, 0])
 
         if self.key_handler[key.RETURN]:
             im = Image.fromarray(obs)

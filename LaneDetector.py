@@ -146,14 +146,14 @@ class LaneDetector:
 
         res2 = cv2.bitwise_xor(img, res)
 
-        cv2.imshow('res', res)
-        cv2.imshow('res2',res2)
+        #cv2.imshow('res', res)
+        #cv2.imshow('res2',res2)
 
         gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
 
         ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
 
-        cv2.imshow("thresh", thresh)
+        #cv2.imshow("thresh", thresh)
 
         blur = cv2.GaussianBlur(thresh, (5, 5), 0)
 

@@ -161,11 +161,11 @@ class LaneDetector:
 
         gray = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
 
-        ret, thresh = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
+        ret, thresh = cv2.threshold(gray,150,255,cv2.THRESH_BINARY)
 
         cv2.imshow("thresh", thresh)
 
-        blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        blur = cv2.GaussianBlur(thresh, (5, 5), 0)
 
         edges = cv2.Canny(blur, 0, 255, L2gradient = True)
 

@@ -41,7 +41,19 @@ class Simulator:
         self.duckieDetectorML = DuckieDetectorML()
         self.laneDetector = LaneDetector()
 
-        self.env = gym.make(args.env_name)
+        self.env = DuckietownEnv(
+            seed=args.seed,
+            map_name=args.map_name,
+            draw_curve=args.draw_curve,
+            draw_bbox=args.draw_bbox,
+            domain_rand=args.domain_rand,
+            frame_skip=args.frame_skip,
+            distortion=args.distortion,
+            camera_rand=args.camera_rand,
+            dynamics_rand=args.dynamics_rand,
+        )
+
+        #self.env = gym.make(args.env_name)
 
         self.env.reset()
         self.env.render()
@@ -68,6 +80,8 @@ class Simulator:
 
         action = self.decidedAction
 
+        print(f"Action: {action}")
+
         if self.key_handler[key.UP]:
             action += np.array([0.44, 0.0])
         if self.key_handler[key.DOWN]:
@@ -88,7 +102,7 @@ class Simulator:
             self.env.close()
             sys.exit(0)
 
-        v1 = action[0]
+        """v1 = action[0]
         v2 = action[1]
         # Limit radius of curvature
         if v1 == 0 or abs(v2 / v1) > (min_rad + wheel_distance / 2.0) / (min_rad - wheel_distance / 2.0):
@@ -98,14 +112,14 @@ class Simulator:
             v2 -= delta_v
 
         action[0] = v1
-        action[1] = v2
+        action[1] = v2"""
 
         # Speed boost
         if self.key_handler[key.LSHIFT]:
             action *= 1.5
 
         obs, reward, done, info = self.env.step(action)
-        print("step_count = %s, reward=%.3f" % (self.env.unwrapped.step_count, reward))
+        #print("step_count = %s, reward=%.3f" % (self.env.unwrapped.step_count, reward))
 
         frame = Image.fromarray(obs)
         #self.duckieDetector.detect(frame)
@@ -114,14 +128,26 @@ class Simulator:
 
         print(f"LeftLine: {left_line} RightLine: {right_line}")
         if right_line is None:
-            self.decidedAction = np.array([0, -2])
+            self.decidedAction = np.array([0.0, -1.0])
         else:
             x1, y1, x2, y2 = right_line
             slope = (y2 - y1) / (x2 - x1)
-            if x1 < 639:
-                self.decidedAction = np.array([0, 2])
+
+            p1=np.array([x1,y1])
+            p2=np.array([x2,y2])
+            p3=np.array([320,480])
+
+            d = np.abs(np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1))
+            print(f"Distance to RightLine: {d}")
+
+            if d < 200:
+                self.decidedAction = np.array([0.0, 1.0])
+            elif d > 300:
+                self.decidedAction = np.array([0.0, -1.0])
             else:
-                self.decidedAction = np.array([0.4, 0])
+                self.decidedAction = np.array([1.0, 1.0])
+
+        #self.decidedAction = np.array([0.4, 0])
 
         if self.key_handler[key.RETURN]:
             im = Image.fromarray(obs)

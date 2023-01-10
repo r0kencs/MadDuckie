@@ -45,6 +45,22 @@ def drawHoughLinesP(image, lines):
             cv2.line(image, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
     return image
 
+def getCorrectLines(lines):
+    if lines is None:
+        return None
+
+    correctLines = []
+
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        slope = (y2 - y1) / (x2 - x1)
+
+        if slope > 0:
+            correctLines.append(line)
+        #print(f"x1: {x1} y1: {y1} x2: {x2} y2: {y2} Slope: {slope}")
+
+    return correctLines
+
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 lower_white = np.array([20,60,100],np.uint8)
@@ -68,25 +84,21 @@ blur = cv2.GaussianBlur(thresh, (5, 5), 0)
 
 edges = cv2.Canny(blur, 0, 255, L2gradient = True)
 
-cv2.imshow("Edges", edges)
-
 region_image = region(edges)
-
-cv2.imshow("Region", region_image)
 
 canny1 = cv2.bitwise_or(gray, edges)
 
-cv2.imshow("Edges", canny1)
-
-lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
+#lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
 linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=1, maxLineGap=100)
+
+linesP = getCorrectLines(linesP)
 
 imgCopy = img.copy()
 
-img = drawHoughLines(img, lines)
+#img = drawHoughLines(img, lines)
 imgCopy = drawHoughLinesP(imgCopy, linesP)
 
-cv2.imshow("Hough Lane Detection", img)
+#cv2.imshow("Hough Lane Detection", img)
 
 cv2.imshow("Hough Probabilistic Lane Detection", imgCopy)
 

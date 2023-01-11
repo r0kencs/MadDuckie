@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-img = cv2.imread('screen.png')
+img = cv2.imread('images/screen3508.png')
 
 def region(image):
     height, width = image.shape
@@ -158,7 +158,8 @@ region_image = region(edges)
 cv2.imshow("edges", edges)
 
 #lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
-linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=50, maxLineGap=1)
+#linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=50, maxLineGap=1)
+linesP = cv2.HoughLinesP(region_image, 1, np.pi / 180, 50, None, 50, 10)
 
 #linesP = getCorrectLines(linesP)
 
@@ -167,7 +168,7 @@ imgCopy = img.copy()
 averaged_lines = average(imgCopy, linesP)
 
 #img = drawHoughLines(img, lines)
-#imgCopy = drawHoughLinesP(imgCopy, linesP)
+imgCopy = drawHoughLinesP(imgCopy, linesP)
 
 #cv2.imshow("Hough Probabilistic Lane Detection", imgCopy)
 

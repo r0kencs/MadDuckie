@@ -13,6 +13,8 @@ from DuckieDetector import DuckieDetector
 from DuckieDetectorML import DuckieDetectorML
 from LaneDetector import LaneDetector
 
+from random import *
+
 class Simulator:
 
     env = None
@@ -149,9 +151,13 @@ class Simulator:
             else:
                 self.decidedAction = np.array([1.0, 1.0])
 
+        if duckie_distance != None and duckie_distance < 200:
+            self.decidedAction = np.array([0.0, 0.0])
+
         if self.key_handler[key.RETURN]:
+            x = randint(1, 10000)
             im = Image.fromarray(obs)
-            im.save("screen.png")
+            im.save("images/screen" + str(x) + ".png")
 
         if done:
             print("done!")

@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import math
 
-MODEL_PATH = 'model/exp/weights/last.pt'
+MODEL_PATH = 'model/exp/weights/best.pt'
 
 class DuckieDetectorML:
     def __init__(self):
@@ -21,7 +21,7 @@ class DuckieDetectorML:
 
         cv2.imshow('YOLOv5', out)
 
-        happy_results = results.xyxy[0].numpy()
+        happy_results = results.xyxy[0].cpu().numpy()
 
         distances = []
 
@@ -36,6 +36,9 @@ class DuckieDetectorML:
 
         cv2.waitKey(1)
 
-        min_d = min(distances)
+        if len(distances) > 0:
+            min_d = min(distances)
+        else:
+            min_d = None
 
         return min_d

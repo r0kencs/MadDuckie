@@ -174,7 +174,7 @@ class LaneDetector:
         cv2.imshow("edges", edges)
 
         #lines = cv2.HoughLines(region_image, 1, np.pi / 180, 150, None, 0, 0)
-        linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=1, maxLineGap=100)
+        linesP = cv2.HoughLinesP(region_image, rho=1, theta=np.pi/180, threshold=50, minLineLength=50, maxLineGap=1)
 
         #linesP = getCorrectLines(linesP)
 

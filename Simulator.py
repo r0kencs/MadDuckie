@@ -57,19 +57,22 @@ class Simulator:
         if 0 <= self.state <= 3:
             if d < 0:
                 self.state = 0
-            elif d < 200:
+            elif d < 280:
                 self.state = 1
             elif d > 300:
                 self.state = 2
             else:
                 self.state = 3
 
-            if duckieDistance != None and duckieDistance < 250:
+            if duckieDistance != None and duckieDistance < 260:
                 self.state = 4
 
         elif self.state == 4:
             if duckieDistance != None:
-                self.state = 4
+                if duckieDistance < 400:
+                    self.state = 4
+                else:
+                    self.state = 0
             else:
                 self.state = 0
 
@@ -77,7 +80,7 @@ class Simulator:
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--env-name", default=None)
-        parser.add_argument("--map-name", default="udem1")
+        parser.add_argument("--map-name", default="loop_obstacles")
         parser.add_argument("--distortion", default=False, action="store_true")
         parser.add_argument("--camera_rand", default=False, action="store_true")
         parser.add_argument("--draw-curve", action="store_true", help="draw the lane following curve")
@@ -85,7 +88,7 @@ class Simulator:
         parser.add_argument("--domain-rand", action="store_true", help="enable domain randomization")
         parser.add_argument("--dynamics_rand", action="store_true", help="enable dynamics randomization")
         parser.add_argument("--frame-skip", default=1, type=int, help="number of frames to skip")
-        parser.add_argument("--seed", default=1, type=int, help="seed")
+        parser.add_argument("--seed", default=5, type=int, help="seed")
         args = parser.parse_args()
 
         self.duckieDetector = DuckieDetector()

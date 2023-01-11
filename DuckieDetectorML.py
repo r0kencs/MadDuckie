@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import math
 
-MODEL_PATH = 'model/exp/weights/best.pt'
+MODEL_PATH = 'model/exp2/weights/best.pt'
 
 class DuckieDetectorML:
     def __init__(self):

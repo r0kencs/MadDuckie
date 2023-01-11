@@ -25,6 +25,8 @@ class Simulator:
 
     decidedAction = []
 
+    stop = False
+
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--env-name", default=None)
@@ -82,7 +84,7 @@ class Simulator:
 
         action = self.decidedAction
 
-        print(f"Action: {action}")
+        #print(f"Action: {action}")
 
         if self.key_handler[key.UP]:
             action += np.array([0.44, 0.0])
@@ -130,7 +132,7 @@ class Simulator:
 
         print(f"duckie_distance: {duckie_distance}")
 
-        print(f"LeftLine: {left_line} RightLine: {right_line}")
+        #print(f"LeftLine: {left_line} RightLine: {right_line}")
         if right_line is None:
             self.decidedAction = np.array([0.0, -1.0])
         else:
@@ -142,7 +144,7 @@ class Simulator:
             p3=np.array([320,480])
 
             d = np.abs(np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1))
-            print(f"Distance to RightLine: {d}")
+            #print(f"Distance to RightLine: {d}")
 
             if d < 200:
                 self.decidedAction = np.array([0.0, 1.0])
@@ -151,7 +153,11 @@ class Simulator:
             else:
                 self.decidedAction = np.array([1.0, 1.0])
 
-        if duckie_distance != None and duckie_distance < 200:
+        if duckie_distance != None and duckie_distance < 250:
+            print("STOP")
+            self.stop = True
+
+        if self.stop == True:
             self.decidedAction = np.array([0.0, 0.0])
 
         if self.key_handler[key.RETURN]:
@@ -160,7 +166,7 @@ class Simulator:
             im.save("images/screen" + str(x) + ".png")
 
         if done:
-            print("done!")
+            #print("done!")
             self.env.reset()
             self.env.render()
 

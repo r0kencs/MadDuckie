@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from Simulator import Simulator
 from DuckieDetector import DuckieDetector
 

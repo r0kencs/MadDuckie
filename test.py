@@ -3,11 +3,11 @@ import numpy as np
 import torch
 import math
 
-MODEL_PATH = 'model/exp/weights/last.pt'
+MODEL_PATH = 'model/exp3/weights/last.pt'
 
 model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, force_reload=True)
 
-open_cv_image = cv2.imread('lane.png')
+open_cv_image = cv2.imread('images/screen2820.png')
 img = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
 
 results = model(img)

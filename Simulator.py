@@ -25,7 +25,54 @@ class Simulator:
 
     decidedAction = []
 
+    state = 0
+
     stop = False
+
+    def getActionFromState(self):
+        if (self.state == 0):
+            self.decidedAction = np.array([0.0, -1.0])
+        elif (self.state == 1):
+            self.decidedAction = np.array([0.0, 1.0])
+        elif (self.state == 2):
+            self.decidedAction = np.array([0.0, -1.0])
+        elif (self.state == 3):
+            self.decidedAction = np.array([1.0, 1.0])
+        elif (self.state == 4):
+            self.decidedAction = np.array([0.0, 1.0])
+
+    def calculateState(self, rightLine, duckieDistance):
+        if rightLine is None:
+            d = -1
+        else:
+            x1, y1, x2, y2 = rightLine
+            slope = (y2 - y1) / (x2 - x1)
+
+            p1=np.array([x1,y1])
+            p2=np.array([x2,y2])
+            p3=np.array([320,480])
+
+            d = np.abs(np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1))
+
+        if 0 <= self.state <= 3:
+            if d < 0:
+                self.state = 0
+            elif d < 200:
+                self.state = 1
+            elif d > 300:
+                self.state = 2
+            else:
+                self.state = 3
+
+            if duckieDistance != None and duckieDistance < 250:
+                self.state = 4
+
+        elif self.state == 4:
+            if duckieDistance != None:
+                self.state = 4
+            else:
+                self.state = 0
+
 
     def __init__(self):
         parser = argparse.ArgumentParser()
@@ -133,32 +180,10 @@ class Simulator:
         print(f"duckie_distance: {duckie_distance}")
 
         #print(f"LeftLine: {left_line} RightLine: {right_line}")
-        if right_line is None:
-            self.decidedAction = np.array([0.0, -1.0])
-        else:
-            x1, y1, x2, y2 = right_line
-            slope = (y2 - y1) / (x2 - x1)
 
-            p1=np.array([x1,y1])
-            p2=np.array([x2,y2])
-            p3=np.array([320,480])
+        self.calculateState(right_line, duckie_distance)
 
-            d = np.abs(np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1))
-            #print(f"Distance to RightLine: {d}")
-
-            if d < 200:
-                self.decidedAction = np.array([0.0, 1.0])
-            elif d > 300:
-                self.decidedAction = np.array([0.0, -1.0])
-            else:
-                self.decidedAction = np.array([1.0, 1.0])
-
-        if duckie_distance != None and duckie_distance < 250:
-            print("STOP")
-            self.stop = True
-
-        if self.stop == True:
-            self.decidedAction = np.array([0.0, 0.0])
+        self.getActionFromState()
 
         if self.key_handler[key.RETURN]:
             x = randint(1, 10000)

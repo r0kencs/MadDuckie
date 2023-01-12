@@ -9,6 +9,18 @@ README: InRoad Duckie Avoidance
     - numpy package: 1.23
     - PyTorch: 1.8.1+cu101
 
+- Usage:
+    - Install the required packages
+        - git clone https://github.com/duckietown/gym-duckietown.git
+        - cd gym-duckietown
+        - pip3 install -e .
+    - Install PyTorch
+    - Check if all the packages above have the correct versions (latest versions might bring errors)
+    - Access project's folder and give permissions to the main.py file (if needed):
+        - chmod u+x main.py
+    - Run the command:
+        - ./main.py
+
 - Directory Organization: 
 DuckieAvoidance/
 ├── data/
